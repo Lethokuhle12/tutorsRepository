@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration</title>
+    <link rel="stylesheet" href="css\tutorsStyle.css">
+</head>
+<body>
+    <section id="registration">
+        <div class="container">
+            <h2>Student Registration</h2>
+            <form action="#" method="POST" id="registrationForm">
+                <div class="form-group">
+                    <label for="studentName">Student Name:</label>
+                    <input type="text" id="studentName" name="studentName" placeholder="Enter first name" required>
+                </div>
+                <div class="form-group">
+                    <label for="studentSurname">Surname:</label>
+                    <input type="text" id="studentSurname" name="studentSurname" placeholder="Enter surname" required>
+                </div>
+                <div class="form-group">
+                    <label for="dob">Date of Birth:</label>
+                    <input type="date" id="dob" name="dob" required>
+                </div>
+                <div class="form-group">
+                    <label for="schoolName">School Name:</label>
+                    <input type="text" id="schoolName" name="schoolName" placeholder="Enter school name" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number:</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Enter phone number" required>
+                </div>
+                <div class="form-group">
+                    <label for="altPhone">Alternate Phone Number:</label>
+                    <input type="tel" id="altPhone" name="altPhone" placeholder="Enter alternate phone number">
+                </div>
+                <div class="form-group">
+                    <label for="homeAddress">Home Address:</label>
+                    <textarea id="homeAddress" name="homeAddress" placeholder="Enter home address" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="postalAddress">Postal Address:</label>
+                    <textarea id="postalAddress" name="postalAddress" placeholder="Enter postal address"></textarea>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="sameAsHome" name="sameAsHome">
+                        <label for="sameAsHome">Same as Home Address</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="grade">Grade:</label>
+                    <select id="grade" name="grade" required>
+                        <option value="" disabled selected>Select Grade</option>
+                        <option value="8">Grade 8</option>
+                        <option value="9">Grade 9</option>
+                        <option value="10">Grade 10</option>
+                        <option value="11">Grade 11</option>
+                        <option value="12">Grade 12</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Select Subjects (maximum 4):</label>
+                    <div class="checkbox-group" id="subjectsContainer">
+                        <!-- Subjects will be dynamically loaded here -->
+                    </div>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+    </section>
+    <script>
+        const subjectsForGrades = {
+            "8": ["English", "Natural Science", "Economics & Management Science", "Maths"],
+            "9": ["English", "Natural Science", "Economics And Management Science", "Maths"],
+            "default": ["Physical Science", "Pure Mathematics", "Maths Literacy", "Geography", "Life Science", "History", "Tourism", "Accounting", "Economics"]
+        };
+
+        const gradeDropdown = document.getElementById("grade");
+        const subjectsContainer = document.getElementById("subjectsContainer");
+        const maxSelection = 4;
+
+        function loadSubjects(subjects) {
+            subjectsContainer.innerHTML = ""; // Clear previous subjects
+            subjects.forEach(subject => {
+                const label = document.createElement("label");
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.name = "subjects";
+                checkbox.value = subject;
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(` ${subject}`));
+                subjectsContainer.appendChild(label);
+                subjectsContainer.appendChild(document.createElement("br"));
+            });
+
+            const checkboxes = document.querySelectorAll('input[name="subjects"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    const checkedCount = document.querySelectorAll('input[name="subjects"]:checked').length;
+                    if (checkedCount > maxSelection) {
+                        alert(`You can only select up to ${maxSelection} subjects.`);
+                        checkbox.checked = false; // Uncheck the last selected box
+                    }
+                });
+            });
+        }
+
+        gradeDropdown.addEventListener("change", () => {
+            const selectedGrade = gradeDropdown.value;
+            const subjects = subjectsForGrades[selectedGrade] || subjectsForGrades["default"];
+            loadSubjects(subjects);
+        });
+
+        // Load default subjects on page load
+        loadSubjects(subjectsForGrades["default"]);
+
+        const sameAsHomeCheckbox = document.getElementById('sameAsHome');
+        const postalAddressField = document.getElementById('postalAddress');
+
+        sameAsHomeCheckbox.addEventListener('change', () => {
+            if (sameAsHomeCheckbox.checked) {
+                postalAddressField.value = document.getElementById('homeAddress').value;
+                postalAddressField.disabled = true;
+            } else {
+                postalAddressField.disabled = false;
+                postalAddressField.value = "";
+            }
+        });
+    </script>
+</body>
+</html>
